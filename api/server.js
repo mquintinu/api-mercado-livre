@@ -10,17 +10,29 @@ server.register(cors, {
   methods: ['GET', 'POST'],
 });
 
-const ENDPOINT_ML = `https://api.mercadolibre.com/sites/MLB/search?q=`;
+const ENDPOINT_ML = `https://api.mercadolibre.com/`;
 
-server.get('/search', async (request, reply) => {
+server.get('/searchByTitle', async (request, reply) => {
   const { title } = request.query;
 
   try {
-    const response = await axios.get(`${ENDPOINT_ML}${encodeURIComponent(title)}`);
+    const response = await axios.get(`${ENDPOINT_ML}sites/MLB/search?q=${encodeURIComponent(title)}`);
     return reply.send(response.data);
   } catch (error) {
     console.error('Erro ao buscar produtos:', error);
     return reply.status(500).send({ error: 'Erro ao buscar produtos' });
+  }
+});
+
+server.get('/findById/:id', async (request, reply) => {
+  const id = request.params.id;
+
+  try {
+    const response = await axios.get(`${ENDPOINT_ML}items/${encodeURIComponent(id)}`);
+    return reply.send(response.data);
+  } catch (error) {
+    console.error('Erro ao buscar :', error);
+    return reply.status(500).send({ error: 'Erro ao buscar produto' });
   }
 });
 
