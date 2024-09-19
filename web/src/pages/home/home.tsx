@@ -5,6 +5,7 @@ import { Product } from '../../models/product';
 import ProductService from '../../services/product-service';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 
 const Home: React.FC = () => {
 
@@ -12,6 +13,7 @@ const Home: React.FC = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [productTitle, setProductTitle] = useState<string>('');
+  const [isAscending, setIsAscending] = useState(true);
 
   const [isLoading, setIsLoading] = useState<boolean>();
 
@@ -43,10 +45,23 @@ const Home: React.FC = () => {
     setProductTitle('');
   }
 
+  const clearProducts = () => {
+    setProducts([]);
+  }
+
+  const orderByTitle = () => {
+    const sortedProducts = [...products].sort((a, b) => {
+      return isAscending ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
+    });
+
+    setProducts(sortedProducts);
+    setIsAscending(!isAscending); // Alterna a direção da próxima ordenação
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      search();
+      if (products.length == 0) search();
     }
   }
 
@@ -57,7 +72,10 @@ const Home: React.FC = () => {
   return (
     <>
       <Box sx={{ backgroundColor: "#e9e9e9", padding: "10px" }}>
-        <h1 style={{ textAlign: 'center' }} >{titulo}</h1>
+
+        <Typography variant="h4" fontWeight={"bold"} sx={{ textAlign: 'center', marginBottom: 4 }}>
+          {titulo}
+        </Typography>
 
         <Box
           component="form"
@@ -74,9 +92,26 @@ const Home: React.FC = () => {
           </Box>
 
           <Box sx={{ marginTop: 2, justifyContent: 'end' }}>
+
             <Button variant="contained" onClick={search}>
               {isLoading ? 'Buscando...' : 'Buscar'}
             </Button>
+
+            {products.length > 0 && (
+              <Button variant="outlined" color="error" onClick={clearProducts} sx={{ marginLeft: 2 }}>
+                Limpar
+              </Button>
+            )}
+
+            {products.length > 0 && (
+              <Box sx={{ marginTop: 2 }}>
+                <Button variant="text" startIcon={<SortByAlphaIcon />} onClick={orderByTitle}>
+                  <Typography variant='caption'>Ordenar por nome
+                  </Typography>
+                </Button>
+              </Box>
+            )}
+
             {isLoading && (
               <Box sx={{ display: 'flex', marginTop: 2 }}>
                 <CircularProgress color='info' />
@@ -108,7 +143,7 @@ const Home: React.FC = () => {
             ))}
           </List>
         </Box>
-      </Box>
+      </Box >
     </>
   )
 }

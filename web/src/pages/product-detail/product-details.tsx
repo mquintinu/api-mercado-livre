@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductService from "../../services/product-service";
 import { Product } from "../../models/product";
-import { Box, Button, Typography } from "@mui/material";
+import { Badge, Box, Button, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const ProductDetails = ({ }) => {
@@ -43,37 +43,64 @@ const ProductDetails = ({ }) => {
 
   return (
     <>
-      <Box sx={{ backgroundColor: "#e9e9e9", padding: "10px" }}>
+      <Box sx={{ backgroundColor: "#e9e9e9" }}>
         <Button variant="text" startIcon={<ArrowBackIcon />} onClick={backToHome}>
           Voltar
         </Button>
 
-        <h1 style={{ textAlign: 'center' }} >{titulo}</h1>
-
+        <Typography variant="h4" fontWeight={"bold"} sx={{ textAlign: 'center', marginBottom: 4 }}>
+          {titulo}
+        </Typography>
 
         {product ? (
-          <Box component={"div"}>
-            <h2>{product.title}</h2>
-            <Box>
-              <Typography component="span" sx={{ fontWeight: 'bold' }} >
-                {formatToReal(product.price)}
+          <Box>
+            <Typography variant="h4">{product.title}</Typography>
+            <Box sx={{ display: 'flex' }}>
+              <Typography >Condição:
+                <Badge sx={{ marginLeft: 4 }}
+                  color={product.condition === "used" ? "error" : "success"}
+                  badgeContent={product.condition === "used" ? "Usado" : "Novo"}>
+                </Badge>
               </Typography>
-              <p>Condição: {product.condition === "used" ? "Usado" : "Novo"}</p>
-
-              {product.warranty && (<p>{product.warranty}</p>)}
-
-              <p>Quantidade em estoque: {product.initial_quantity.toString()}</p>
-              <img src={product.pictures[0].url} alt={product.title} />
             </Box>
 
-            <Button variant="contained" onClick={() => navigateTo(product.permalink)}>
+            <Box>
+              <Typography>
+                Quantidade em estoque: {product.initial_quantity.toString()} unidades
+              </Typography>
+
+              <Typography variant="h5" component="span" >
+                {formatToReal(product.price)}
+              </Typography>
+
+              <Box>
+                {/* Garantia */}
+                {product.warranty && (
+                  <Typography variant="caption">
+                    {product.warranty}
+                  </Typography>
+                )}
+              </Box>
+
+            </Box>
+
+            <Button sx={{ marginY: 2 }} variant="contained" onClick={() => navigateTo(product.permalink)}>
               Comprar!
             </Button>
+
+            <Box>
+              <Box sx={{ display: "flex", gap: 2, paddingX: 2, flexWrap: "wrap", width: "100%", maxHeight: "350px", justifyContent: "center", }}
+              >
+                {product.pictures?.map((picture, index) => (
+                  <img key={index} src={picture.url} alt={product.title} />
+                ))}
+              </Box>
+            </Box>
           </Box>
         ) : (
-          <div>Produto não encontrado</div>
+          <Typography>Produto não encontrado</Typography>
         )}
-      </Box>
+      </Box >
     </>
   );
 };
