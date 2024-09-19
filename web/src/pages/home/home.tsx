@@ -14,7 +14,7 @@ const Home: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [productTitle, setProductTitle] = useState<string>('');
   const [isAscending, setIsAscending] = useState(true);
-
+  const [isSearched, setIsSearched] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>();
 
   const service = new ProductService();
@@ -34,12 +34,14 @@ const Home: React.FC = () => {
     try {
       setIsLoading(true);
       const productsFromApi = await service.searchProducts(productTitle);
+      setIsSearched(true);
       setIsLoading(false);
 
       setProducts(productsFromApi);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
-      setIsLoading(false);
+      setIsSearched(false);
+      setIsLoading(false);      
     }
 
     setProductTitle('');
@@ -47,6 +49,7 @@ const Home: React.FC = () => {
 
   const clearProducts = () => {
     setProducts([]);
+    setIsSearched(false);
   }
 
   const orderByTitle = () => {
@@ -119,29 +122,35 @@ const Home: React.FC = () => {
             )}
           </Box>
 
-          <List component="nav">
-            {products.map((product: Product) => (
-              <>
-                <ListItemButton key={product.id} onClick={() => productClick(product.id)}>
-                  <ListItemAvatar>
-                    <Avatar src={product.thumbnail} sx={{ marginRight: 2, width: '50px', height: '50px' }} />
-                  </ListItemAvatar>
-                  <ListItemText primary={product.title}
-                    secondary={
-                      <Box>
-                        <Typography component="span" sx={{ fontWeight: 'bold' }} >
-                          {formatToReal(product.price)}
-                          <Typography display={'flex'} component="span" variant="caption">
-                            Vendido por: {product.seller.nickname}
+          {products?.length > 0 && (
+            <List component="nav">
+              {products.map((product: Product) => (
+                <>
+                  <ListItemButton key={product.id} onClick={() => productClick(product.id)}>
+                    <ListItemAvatar>
+                      <Avatar src={product.thumbnail} sx={{ marginRight: 2, width: '50px', height: '50px' }} />
+                    </ListItemAvatar>
+                    <ListItemText primary={product.title}
+                      secondary={
+                        <Box>
+                          <Typography component="span" sx={{ fontWeight: 'bold' }} >
+                            {formatToReal(product.price)}
+                            <Typography display={'flex'} component="span" variant="caption">
+                              Vendido por: {product.seller.nickname}
+                            </Typography>
                           </Typography>
-                        </Typography>
-                      </Box>
-                    } />
-                </ListItemButton >
-                <Divider variant="middle" component="li" />
-              </>
-            ))}
-          </List>
+                        </Box>
+                      } />
+                  </ListItemButton >
+                  <Divider variant="middle" component="li" />
+                </>
+              ))}
+            </List>
+          )}
+
+          {(isSearched && !isLoading && products.length === 0) && (
+            <Typography sx={{marginTop: 1}}>Nenhum produto encontrado :(</Typography>
+          )}
         </Box>
       </Box >
     </>

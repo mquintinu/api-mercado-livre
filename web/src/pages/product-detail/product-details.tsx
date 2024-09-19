@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductService from "../../services/product-service";
 import { Product } from "../../models/product";
-import { Badge, Box, Button, Typography } from "@mui/material";
+import { Badge, Box, Button, Divider, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const ProductDetails = ({ }) => {
@@ -44,17 +44,22 @@ const ProductDetails = ({ }) => {
   return (
     <>
       <Box sx={{ backgroundColor: "#e9e9e9" }}>
+
         <Button variant="text" startIcon={<ArrowBackIcon />} onClick={backToHome}>
           Voltar
         </Button>
 
-        <Typography variant="h4" fontWeight={"bold"} sx={{ textAlign: 'center', marginBottom: 4 }}>
-          {titulo}
-        </Typography>
+        <Divider variant="fullWidth" sx={{ marginY: 2 }} />
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="h4" fontWeight={"bold"} sx={{ textAlign: 'center',}}>
+            {titulo}
+          </Typography>
+        </Box>
+        <Divider variant="fullWidth" sx={{ marginY: 2 }} />
 
         {product ? (
           <Box>
-            <Typography variant="h4">{product.title}</Typography>
+            <Typography variant="h5">{product.title}</Typography>
             <Box sx={{ display: 'flex' }}>
               <Typography >Condição:
                 <Badge sx={{ marginLeft: 4 }}
