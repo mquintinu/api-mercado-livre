@@ -56,7 +56,7 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Box sx={{ backgroundColor: "#ffe600", padding: "10px" }}>
+      <Box sx={{ backgroundColor: "#e9e9e9", padding: "10px" }}>
         <h1 style={{ textAlign: 'center' }} >{titulo}</h1>
 
         <Box

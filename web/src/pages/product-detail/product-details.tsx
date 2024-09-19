@@ -43,7 +43,7 @@ const ProductDetails = ({ }) => {
 
   return (
     <>
-      <Box sx={{ backgroundColor: "#ffe600", padding: "10px" }}>
+      <Box sx={{ backgroundColor: "#e9e9e9", padding: "10px" }}>
         <Button variant="text" startIcon={<ArrowBackIcon />} onClick={backToHome}>
           Voltar
         </Button>
