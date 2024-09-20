@@ -51,14 +51,15 @@ const ProductDetails = ({ }) => {
 
         <Divider variant="fullWidth" sx={{ marginY: 2 }} />
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h4" fontWeight={"bold"} sx={{ textAlign: 'center',}}>
+          <Typography variant="h4" fontWeight={"bold"} sx={{ textAlign: 'center', }}>
             {titulo}
           </Typography>
         </Box>
         <Divider variant="fullWidth" sx={{ marginY: 2 }} />
 
+
         {product ? (
-          <Box>
+          <Box sx={{ backgroundColor: "white", padding: "10px" }}>
             <Typography variant="h5">{product.title}</Typography>
             <Box sx={{ display: 'flex' }}>
               <Typography >Condição:
@@ -93,14 +94,22 @@ const ProductDetails = ({ }) => {
               Comprar!
             </Button>
 
-            <Box>
-              <Box sx={{ display: "flex", gap: 2, paddingX: 2, flexWrap: "wrap", width: "100%", maxHeight: "350px", justifyContent: "center", }}
-              >
-                {product.pictures?.map((picture, index) => (
-                  <img key={index} src={picture.url} alt={product.title} />
-                ))}
-              </Box>
+            <Box sx={{ display: "flex", gap: 2, paddingX: 2, flexWrap: "wrap", width: "100%", justifyContent: "center", }}>
+              {product.pictures?.map((picture, index) => (
+                <Box key={index} sx={{ maxWidth: '100%', overflow: 'hidden' }}>
+                  <img
+                    src={picture.url}
+                    alt={product.title}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </Box>
+              ))}
             </Box>
+
           </Box>
         ) : (
           <Typography>Produto não encontrado</Typography>

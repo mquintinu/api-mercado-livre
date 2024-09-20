@@ -6,6 +6,7 @@ import ProductService from '../../services/product-service';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const Home: React.FC = () => {
 
@@ -13,7 +14,8 @@ const Home: React.FC = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [productTitle, setProductTitle] = useState<string>('');
-  const [isAscending, setIsAscending] = useState(true);
+  const [isTitleAscending, setIsTitleAscending] = useState(true);
+  const [isPriceAscending, setIsPriceAscending] = useState(true);
   const [isSearched, setIsSearched] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>();
 
@@ -41,7 +43,7 @@ const Home: React.FC = () => {
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
       setIsSearched(false);
-      setIsLoading(false);      
+      setIsLoading(false);
     }
 
     setProductTitle('');
@@ -54,11 +56,20 @@ const Home: React.FC = () => {
 
   const orderByTitle = () => {
     const sortedProducts = [...products].sort((a, b) => {
-      return isAscending ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
+      return isTitleAscending ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
     });
 
     setProducts(sortedProducts);
-    setIsAscending(!isAscending); // Alterna a direção da próxima ordenação
+    setIsTitleAscending(!isTitleAscending);
+  };
+
+  const orderByPrice = () => {
+    const sortedProducts = [...products].sort((a, b) => {
+      return isPriceAscending ? a.price - b.price : b.price - a.price;
+    });
+
+    setProducts(sortedProducts);
+    setIsPriceAscending(!isPriceAscending);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -74,28 +85,32 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Box sx={{ backgroundColor: "#e9e9e9", padding: "10px" }}>
-
-        <Typography variant="h4" fontWeight={"bold"} sx={{ textAlign: 'center', marginBottom: 4 }}>
+      <Box sx={{ backgroundColor: "#ffe600", padding: "10px", textAlign: 'center' }}>
+        <Typography variant="h4" fontWeight={"bold"} sx={{ color: "#681e90" }}>
           {titulo}
         </Typography>
+      </Box>
 
+      <Box sx={{ padding: "10px" }}>
         <Box
           component="form"
           noValidate
           autoComplete="off"
         >
           <Box>
-            <TextField id="outlined-basic" label="Pesquisar produtos, marcas e muito mais..."
-              variant="outlined" fullWidth
+            <TextField
+              id="outlined-basic"
+              label="Pesquisar produtos, marcas e muito mais..."
+              variant="outlined"
+              fullWidth
               onChange={(e) => setProductTitle(e.target.value)}
               onKeyDown={handleKeyDown}
               value={productTitle}
+              sx={{ marginTop: 2 }}
             />
           </Box>
 
           <Box sx={{ marginTop: 2, justifyContent: 'end' }}>
-
             <Button variant="contained" onClick={search}>
               {isLoading ? 'Buscando...' : 'Buscar'}
             </Button>
@@ -106,14 +121,26 @@ const Home: React.FC = () => {
               </Button>
             )}
 
-            {products.length > 0 && (
-              <Box sx={{ marginTop: 2 }}>
-                <Button variant="text" startIcon={<SortByAlphaIcon />} onClick={orderByTitle}>
-                  <Typography variant='caption'>Ordenar por nome
-                  </Typography>
-                </Button>
-              </Box>
-            )}
+            <Box sx={{display: "flex"}}>
+              {products.length > 0 && (
+                <Box sx={{ marginTop: 2 }}>
+                  <Typography variant="caption">Ordenar por</Typography>
+                  <Button variant="text" startIcon={<SortByAlphaIcon />} onClick={orderByTitle}>
+                    <Typography variant='caption'>nome</Typography>
+                  </Button>
+                </Box>
+              )}
+
+              {products.length > 0 && (
+                <Box sx={{ marginTop: 2 }}>
+                  <Button variant="text" startIcon={<AttachMoneyIcon />} onClick={orderByPrice}>
+                    <Typography variant='caption'>
+                      {isPriceAscending ? "menor preço" : "maior preço"}
+                    </Typography>
+                  </Button>
+                </Box>
+              )}
+            </Box>
 
             {isLoading && (
               <Box sx={{ display: 'flex', marginTop: 2 }}>
@@ -133,7 +160,7 @@ const Home: React.FC = () => {
                     <ListItemText primary={product.title}
                       secondary={
                         <Box>
-                          <Typography component="span" sx={{ fontWeight: 'bold' }} >
+                          <Typography component="span" sx={{ fontWeight: 'bold' }}>
                             {formatToReal(product.price)}
                             <Typography display={'flex'} component="span" variant="caption">
                               Vendido por: {product.seller.nickname}
@@ -141,7 +168,7 @@ const Home: React.FC = () => {
                           </Typography>
                         </Box>
                       } />
-                  </ListItemButton >
+                  </ListItemButton>
                   <Divider variant="middle" component="li" />
                 </>
               ))}
@@ -149,12 +176,13 @@ const Home: React.FC = () => {
           )}
 
           {(isSearched && !isLoading && products.length === 0) && (
-            <Typography sx={{marginTop: 1}}>Nenhum produto encontrado :(</Typography>
+            <Typography sx={{ marginTop: 1 }}>Nenhum produto encontrado :(</Typography>
           )}
         </Box>
-      </Box >
+      </Box>
     </>
-  )
+  );
+
 }
 
 export default Home
