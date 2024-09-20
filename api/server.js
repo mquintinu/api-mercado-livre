@@ -1,40 +1,19 @@
 import { fastify } from 'fastify';
-import axios from 'axios';
 import cors from '@fastify/cors';
+import dotenv from 'dotenv';
+import corsConfig from './src/config/corsConfig.js';
+import productRoutes from './src/routes/productRoutes.js';
+
+// Carregar variáveis de ambiente
+dotenv.config();
 
 const server = fastify();
 
-// Configuração do CORS
-server.register(cors, {
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST'],
-});
+// CORS
+server.register(cors, corsConfig);
 
-const ENDPOINT_ML = `https://api.mercadolibre.com/`;
-
-server.get('/searchByTitle', async (request, reply) => {
-  const { title } = request.query;
-
-  try {
-    const response = await axios.get(`${ENDPOINT_ML}sites/MLB/search?q=${encodeURIComponent(title)}`);
-    return reply.send(response.data);
-  } catch (error) {
-    console.error('Erro ao buscar produtos:', error);
-    return reply.status(500).send({ error: 'Erro ao buscar produtos' });
-  }
-});
-
-server.get('/findById/:id', async (request, reply) => {
-  const id = request.params.id;
-
-  try {
-    const response = await axios.get(`${ENDPOINT_ML}items/${encodeURIComponent(id)}`);
-    return reply.send(response.data);
-  } catch (error) {
-    console.error('Erro ao buscar :', error);
-    return reply.status(500).send({ error: 'Erro ao buscar produto' });
-  }
-});
+// ROTAS
+productRoutes(server);
 
 server.listen({ host: '0.0.0.0', port: process.env.PORT ?? 3333 }, (err, address) => {
   if (err) {
